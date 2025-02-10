@@ -20,7 +20,8 @@ with col2:
 unidades = [unidade for unidade in sorted(df['unidade'].unique()) if unidade != 'nan']
 areas_cnpq = [area for area in sorted(df['gde_area'].unique()) if area != 'nan']
 areas_extensao = [area for area in sorted(df['area_extensao'].unique()) if area != 'nan']
-tipos = ['extensão', 'ensino', 'pesquisa', "não informou"]
+tipos = ['extensão', 'ensino', 'pesquisa']
+opcoes_filtro_tipos = tipos + ["não informou"]
 vinculos = df.vinculo.unique().tolist()
 
 # Sidebar
@@ -28,7 +29,7 @@ st.sidebar.header("Filtros")
 
 gde_area = st.sidebar.selectbox("Grande Área CNPq", ["Todas"] + areas_cnpq)
 area_extensao = st.sidebar.selectbox("Área de Extensão", ["Todas"] + areas_extensao)
-tipo = st.sidebar.multiselect("Tipo de ação", tipos, default=tipos)
+tipo = st.sidebar.multiselect("Tipo de ação", opcoes_filtro_tipos, default=tipos)
 vinculo = st.sidebar.multiselect("Vínculo com a UFMG", vinculos, default=vinculos)
 unidade = st.sidebar.selectbox("Unidade", ["Todas"] + unidades)
 posgrad = st.sidebar.radio("Vínculo com Programa de Pós-Graduação?", ["Sim", "Não", "Qualquer"], index=2)
@@ -41,11 +42,25 @@ if gde_area != "Todas":
     dff = dff[dff['gde_area'] == gde_area]
 if area_extensao != "Todas":
     dff = dff[dff['area_extensao'] == area_extensao]
-if set(tipo) != set(tipos): # Se o usuário selecionou algum tipo de ação
+if tipo:
+    # Caso especial "não informou"
     if "não informou" in tipo:
-        dff = dff[(dff[tipo].sum(axis=1) > 0) | (dff[['extensão', 'ensino', 'pesquisa']].fillna(0).sum(axis=1) == 0)]
-    elif tipo:
-        dff = dff[dff[tipo].fillna(0).sum(axis=1) > 0]
+        # Filtra usando APENAS colunas válidas (excluindo o marcador "não informou")
+        colunas_filtro = [c for c in tipo if c != "não informou"]
+        
+        # Cria máscara combinada
+        mask = (
+            (dff[colunas_filtro].sum(axis=1) > 0 if colunas_filtro 
+            else pd.Series(True, index=dff.index))
+        ) | (
+            dff[['extensão', 'ensino', 'pesquisa']].fillna(0).sum(axis=1) == 0
+        )
+        
+        dff = dff[mask]
+    
+    # Caso normal (sem "não informou")
+    else:
+        dff = dff[dff[tipo].sum(axis=1) > 0]
 if vinculo:
     dff = dff[dff['vinculo'].isin(vinculo)]
 if posgrad != "Qualquer":
