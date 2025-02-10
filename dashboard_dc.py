@@ -128,8 +128,9 @@ column_config = {
 
 with tabs[0]:
     st.header("Tabela de Respostas")
-    st.write("Cada linha da tabela representa uma resposta ao questionário. Cada respondente poderia informar até 5 iniciativas de Divulgação Científica.")
-    st.write("Use os controles na barra lateral para filtrar os resultados.")
+    st.write("Esta tabela apresenta as respostas ao questionário de Mapeamento de Divulgação Científica da UFMG. Maiores informações sobre o Mapeamento são encontrados na aba 'Sobre'.")
+    st.write("Cada linha da tabela representa uma resposta ao questionário. Cada respondente poderia informar até 5 iniciativas de divulgação científica.")
+    st.write("Use os controles na barra lateral para filtrar os resultados. Gráficos com análises agregadas estão disponíveis nas abas acima.")
     st.dataframe(df_topage, column_config=column_config, height=500, use_container_width=True)
 
 # Gráficos
@@ -268,13 +269,17 @@ with tabs[8]:
     st.subheader("Sobre o Mapeamento")
     st.write(
         '''
-        Este dashboard apresenta resultados do Mapeamento de Divulgação Científica da UFMG, realizado entre 2023 e 2024.
-        Durante este período, recebemos um total de 204 respostas ao questionário online, divulgado na comunidade acadêmica da UFMG.
-        A partir destas respostas, esperamos ter um diagnóstico das ações de Divulgação Científica realizadas na instituição, 
-        e poderemos propor políticas para aperfeiçoar nossa divulgação científica, à luz da 
-        [Política de Divulgação Científica da UFMG](https://www.ufmg.br/proex/wp-content/uploads/2021/11/02rescepe2021.pdf). 
+        Este dashboard apresenta resultados do Mapeamento de Divulgação Científica da UFMG, realizado pela Diretoria de Divulgação Científica da Pró-Reitoria de Extensão da UFMG,
+        por iniciativa do Comitê de Monitoramento e Avaliação da Política de Divulgação Científica da UFMG 
+        ([COMDICI](https://www.ufmg.br/proex/wp-content/uploads/2021/11/03rescepe2021.pdf)),
+        cujo questionário online esteve aberto para preenchimento da comunidade acadêmica da UFMG entre 2023 e 2024.
+        Durante este período, recebemos um total de 204 respostas.
         '''
     )
+    st.write('''
+        A partir destas respostas, esperamos ter um diagnóstico das ações de Divulgação Científica realizadas na instituição, 
+        e poderemos propor políticas para aperfeiçoar nossa divulgação científica, à luz da 
+        [Política de Divulgação Científica da UFMG](https://www.ufmg.br/proex/wp-content/uploads/2021/11/02rescepe2021.pdf). ''')
     st.write(
         '''
         Para interagir com o painel, utilize os filtros na barra lateral. Pelas abas, você pode navegar entre visualizar a tabela de respostas e 
@@ -282,8 +287,7 @@ with tabs[8]:
     )
     st.write(
         '''
-        Um relatório com análise do mapeamento está em fase de elaboração pelo 
-        [Comitê de Monitoramento e Avaliação da Política de Divulgação Científica da UFMG](https://www.ufmg.br/proex/wp-content/uploads/2021/11/03rescepe2021.pdf)(COMDICI)
+        Um relatório com análise do mapeamento está em fase de elaboração pelo COMDICI e será disponibilizado em breve.
         '''
     )
     
