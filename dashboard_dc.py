@@ -26,11 +26,11 @@ vinculos = df.vinculo.unique().tolist()
 # Sidebar
 st.sidebar.header("Filtros")
 
-unidade = st.sidebar.selectbox("Unidade", ["Todas"] + unidades)
 gde_area = st.sidebar.selectbox("Grande Área CNPq", ["Todas"] + areas_cnpq)
 area_extensao = st.sidebar.selectbox("Área de Extensão", ["Todas"] + areas_extensao)
 tipo = st.sidebar.multiselect("Tipo de ação", tipos, default=tipos)
 vinculo = st.sidebar.multiselect("Vínculo com a UFMG", vinculos, default=vinculos)
+unidade = st.sidebar.selectbox("Unidade", ["Todas"] + unidades)
 posgrad = st.sidebar.radio("Vínculo com Programa de Pós-Graduação?", ["Sim", "Não", "Qualquer"], index=2)
 
 # Filtragem dos dados
@@ -54,9 +54,10 @@ st.subheader(f"Total de registros: {len(dff)}")
 
 # Abas
 tabs = st.tabs([
+    "Tabela de ações",
+    "Distribuição por Grande Área CNPq",
     "Distribuição de Ações",
     "Distribuição de Vínculos",
-    "Distribuição por Grande Área CNPq",
     "Distribuição por Área de Extensão",
     "Distribuição por Unidade",
     "Públicos Específicos",
@@ -64,9 +65,73 @@ tabs = st.tabs([
     "Sobre"
 ])
 
+# Tabela de registros
+# Criar o novo dataframe com as colunas específicas e renomeá-las
+df_topage = dff[
+    [
+        'unidade',
+        'iniciativa[SQ001_SQ001]',
+        'iniciativa[SQ002_SQ001]',
+        'iniciativa[SQ003_SQ001]',
+        'iniciativa[SQ004_SQ001]',
+        'iniciativa[SQ005_SQ001]',
+        'links[SQ001]',
+        'links[SQ002]',
+        'links[SQ004]',
+        'links[SQ005]',
+        'links[SQ006]'
+    ]
+].copy()
+
+# Renomear as colunas conforme especificado
+df_topage = df_topage.rename(columns={
+    'iniciativa[SQ001_SQ001]': 'iniciativa1',
+    'iniciativa[SQ002_SQ001]': 'iniciativa2',
+    'iniciativa[SQ003_SQ001]': 'iniciativa3',
+    'iniciativa[SQ004_SQ001]': 'iniciativa4',
+    'iniciativa[SQ005_SQ001]': 'iniciativa5',
+    'links[SQ001]': 'webpage',
+    'links[SQ002]': 'facebook',
+    'links[SQ004]': 'instagram',
+    'links[SQ005]': 'youtube',
+    'links[SQ006]': 'outro'
+})
+
+# Configurar as colunas de links para serem clicáveis
+column_config = {
+    "webpage": st.column_config.LinkColumn(
+        label="webpage",
+        display_text=None,  # Exibe o próprio URL
+        validate="^https?://.+$",  # Valida URLs que começam com http:// ou https://
+    ),
+    "facebook": st.column_config.LinkColumn(
+        label="facebook",
+        display_text=None,
+        validate="^https?://.+$",
+    ),
+    "instagram": st.column_config.LinkColumn(
+        label="instagram",
+        display_text=None,
+        validate="^https?://.+$",
+    ),
+    "youtube": st.column_config.LinkColumn(
+        label="youtube",
+        display_text=None,
+        validate="^https?://.+$",
+    ),
+    "outro": st.column_config.LinkColumn(
+        label="outro",
+        display_text=None,
+        validate="^https?://.+$",
+    ),
+}
+
+with tabs[0]:
+    st.dataframe(df_topage, column_config=column_config, height=500, use_container_width=True)
+
 # Gráficos
 # Gráfico de Vínculos
-with tabs[1]:
+with tabs[3]:
     vinculos_counts = dff['vinculo'].value_counts().reset_index()
     vinculos_counts.columns = ['vinculo', 'count']
     fig_vinculos = px.bar(
@@ -78,7 +143,7 @@ with tabs[1]:
     st.plotly_chart(fig_vinculos, use_container_width=True)
 
 # Gráfico de Tipo de Ação
-with tabs[0]:
+with tabs[2]:
     contagens = dff[['extensão', 'ensino', 'pesquisa']].sum()
     fig_tipo = go.Figure(data=[go.Pie(labels=contagens.index, values=contagens.values, title="")])
     st.write("**Distribuição de Ações de Divulgação Científica**")
@@ -86,7 +151,7 @@ with tabs[0]:
     st.markdown("**Observação:** Cada respondente poderia mencionar até 5 ações de Divulgação Científica. Os números aqui apresentados representam o somatório de todas as ações.")
 
 # Gráfico de Grande Área CNPq
-with tabs[2]:
+with tabs[1]:
     gde_area_counts = dff['gde_area'].value_counts().reset_index()
     gde_area_counts.columns = ['gde_area', 'count']
     fig_grande_area = px.bar(
@@ -98,7 +163,7 @@ with tabs[2]:
     st.plotly_chart(fig_grande_area, use_container_width=True)
 
 # Gráfico de Área de Extensão
-with tabs[3]:
+with tabs[4]:
     area_ext_counts = dff['area_extensao'].value_counts().reset_index()
     area_ext_counts.columns = ['area_extensao', 'count']
     fig_area_extensao = px.bar(
@@ -110,7 +175,7 @@ with tabs[3]:
     st.plotly_chart(fig_area_extensao, use_container_width=True)
 
 # Gráfico de Unidades
-with tabs[4]:
+with tabs[5]:
     mapeamento = {
         'Escola de Ciências da Informação': 'ECI',
         'Escola de Belas-Artes': 'EBA',
@@ -151,7 +216,7 @@ with tabs[4]:
     st.plotly_chart(fig_unidades, use_container_width=True)
 
 # Construindo o gráfico de Públicos Específicos
-with tabs[5]:
+with tabs[6]:
     dff_publicos = dff.filter(like="publicoespecifico").iloc[:, :-1]
     colunas = [
     'Crianças', 'Jovens', 'Adultos', 'Idosos', 
@@ -173,7 +238,7 @@ with tabs[5]:
     st.plotly_chart(fig_publicos, use_container_width=True)
 
 # Construindo o gráfico de Redes Sociais
-with tabs[6]:
+with tabs[7]:
     url_pattern = re.compile(r'(https?|ftp)://[^\s/$.?#].[^\s]*', re.IGNORECASE)
     def is_valid_url(url):
         if pd.isna(url):
@@ -196,7 +261,7 @@ with tabs[6]:
     st.plotly_chart(fig_socialmedia, use_container_width=True)
 
 # Sobre
-with tabs[7]:
+with tabs[8]:
     st.subheader("Sobre o Mapeamento")
     st.write(
         "Este dashboard apresenta resultados parciais do Mapeamento de Divulgação Científica da UFMG. "
