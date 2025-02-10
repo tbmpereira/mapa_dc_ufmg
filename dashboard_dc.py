@@ -50,11 +50,11 @@ if vinculo:
     dff = dff[dff['vinculo'].isin(vinculo)]
 if posgrad != "Qualquer":
     dff = dff[dff['programas'] == posgrad]
-st.subheader(f"Total de registros: {len(dff)}")
+st.subheader(f"Total de respostas: {len(dff)}")
 
 # Abas
 tabs = st.tabs([
-    "Tabela de ações",
+    "Tabela de Respostas",
     "Distribuição por Grande Área CNPq",
     "Distribuição de Ações",
     "Distribuição de Vínculos",
@@ -127,6 +127,9 @@ column_config = {
 }
 
 with tabs[0]:
+    st.header("Tabela de Respostas")
+    st.write("Cada linha da tabela representa uma resposta ao questionário. Cada respondente poderia informar até 5 iniciativas de Divulgação Científica.")
+    st.write("Use os controles na barra lateral para filtrar os resultados.")
     st.dataframe(df_topage, column_config=column_config, height=500, use_container_width=True)
 
 # Gráficos
@@ -264,25 +267,26 @@ with tabs[7]:
 with tabs[8]:
     st.subheader("Sobre o Mapeamento")
     st.write(
-        "Este dashboard apresenta resultados parciais do Mapeamento de Divulgação Científica da UFMG. "
-        "O mapeamento ainda está aberto para preenchimento de toda a comunidade acadêmica da UFMG "
-        "que atua no âmbito do ensino, da pesquisa e da extensão em divulgação científica."
+        '''
+        Este dashboard apresenta resultados do Mapeamento de Divulgação Científica da UFMG, realizado entre 2023 e 2024.
+        Durante este período, recebemos um total de 204 respostas ao questionário online, divulgado na comunidade acadêmica da UFMG.
+        A partir destas respostas, esperamos ter um diagnóstico das ações de Divulgação Científica realizadas na instituição, 
+        e poderemos propor políticas para aperfeiçoar nossa divulgação científica, à luz da 
+        [Política de Divulgação Científica da UFMG](https://www.ufmg.br/proex/wp-content/uploads/2021/11/02rescepe2021.pdf). 
+        '''
     )
     st.write(
-        "Através deste mapeamento, esperamos reunir informações que nos orientem na "
-        "elaboração de políticas institucionais e que contribuam para a promoção de "
-        "processos solidários e sinérgicos na divulgação científica."
+        '''
+        Para interagir com o painel, utilize os filtros na barra lateral. Pelas abas, você pode navegar entre visualizar a tabela de respostas e 
+        gráficos para visualizar os dados agregados.'''
     )
     st.write(
-        "Se você participa de alguma ação de ensino, pesquisa ou extensão que tenha como "
-        "objetivo o compartilhamento do conhecimento gerado na universidade com o público "
-        "não especializado, sua colaboração é fundamental. Por favor, responda ao "
-        "questionário clicando no botão abaixo."
+        '''
+        Um relatório com análise do mapeamento está em fase de elaboração pelo 
+        [Comitê de Monitoramento e Avaliação da Política de Divulgação Científica da UFMG](https://www.ufmg.br/proex/wp-content/uploads/2021/11/03rescepe2021.pdf)(COMDICI)
+        '''
     )
-    st.markdown(
-        "[Clique aqui para responder](https://questionarios.ufmg.br/index.php/286584?lang=pt-BR)",
-        unsafe_allow_html=True
-    )
+    
 
 st.markdown("---")
 st.markdown("Dashboard desenvolvido por [Marcelo Pereira](https://marcelo-pereira.notion.site/)")
