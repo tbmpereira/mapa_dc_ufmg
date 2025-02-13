@@ -65,7 +65,7 @@ if vinculo:
     dff = dff[dff['vinculo'].isin(vinculo)]
 if posgrad != "Qualquer":
     dff = dff[dff['programas'] == posgrad]
-st.subheader(f"Total de respostas: {len(dff)}")
+st.subheader(f"Respostas filtradas: {len(dff)}")
 
 # Abas
 tabs = st.tabs([
