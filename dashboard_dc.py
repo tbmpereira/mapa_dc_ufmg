@@ -8,13 +8,15 @@ from data_process import df
 # Configuração da página
 st.set_page_config(page_title="Mapeamento Divulgação Científica UFMG", layout="wide")
 
-# Layout do título e imagem alinhados
-col1, col2 = st.columns([3, 1])
-with col1:
-    st.title("Mapeamento da Divulgação Científica na UFMG")
-    st.header("Resultados Parciais", divider="gray")
-with col2:
-    st.image("assets/principal_completa_ufmg.jpg", width=250)
+st.image("assets/banner_mapeamento.png", use_container_width=True)
+
+# # Layout do título e imagem alinhados
+# col1, col2 = st.columns([3, 1])
+# with col1:
+#     st.title("Mapeamento da Divulgação Científica na UFMG")
+#     st.header("", divider="gray")
+# with col2:
+#     st.image("assets/principal_completa_ufmg.jpg", use_container_width=True)
 
 # Listas de opções
 unidades = [unidade for unidade in sorted(df['unidade'].unique()) if unidade != 'nan']
@@ -65,17 +67,17 @@ if vinculo:
     dff = dff[dff['vinculo'].isin(vinculo)]
 if posgrad != "Qualquer":
     dff = dff[dff['programas'] == posgrad]
-st.subheader(f"Respostas filtradas: {len(dff)}")
 
 # Abas
-tabs = st.tabs([
+tab_apresentacao, tab_tabela, tab_gde_area, tab_dimensao, tab_vinculo, tab_area_ext, tab_unidade, tab_publico, tab_redes, tab_sobre = st.tabs([
+    "Apresentação",
     "Tabela de Respostas",
-    "Distribuição por Grande Área CNPq",
-    "Distribuição de Ações",
-    "Distribuição de Vínculos",
-    "Distribuição por Área de Extensão",
-    "Distribuição por Unidade",
-    "Públicos Específicos",
+    "Grande Área CNPq",
+    "Dimensão Acadêmica",
+    "Vínculo Institucional",
+    "Área de Extensão",
+    "Unidade",
+    "Público Específico",
     "Redes Sociais",
     "Sobre"
 ])
@@ -141,8 +143,38 @@ column_config = {
     ),
 }
 
-with tabs[0]:
+# Aba de Apresentação
+with tab_apresentacao:
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.header("Bem-vindo ao Painel Interativo do Mapeamento da Divulgação Científica da UFMG")
+        
+        st.write("""
+            Este painel interativo foi desenvolvido para apresentar os resultados do Mapeamento de Divulgação Científica da UFMG, idealizado pelo
+            Comitê para Discussão e Monitoramente da Política de Divulgação Científica da UFMG (COMDICI), e
+            realizado pela Diretoria de Divulgação Científica da Pró-Reitoria de Extensão da UFMG. O objetivo deste painel é fornecer 
+            uma visão geral e detalhada das ações de divulgação científica realizadas na instituição, permitindo a análise dos dados 
+            de forma dinâmica e interativa.
+        """)
+        st.write("""
+            **Como usar este painel:**
+            - **Filtros na Barra Lateral:** Utilize os filtros disponíveis na barra lateral para refinar os dados conforme suas necessidades. 
+            Você pode filtrar por Grande Área CNPq, Área de Extensão, Tipo de Ação, Vínculo com a UFMG, Unidade e Vínculo com Programa de Pós-Graduação.
+            - **Navegação por Abas:** Navegue pelas abas para acessar diferentes visualizações dos dados, incluindo tabelas de respostas, gráficos 
+            de distribuição por grande área CNPq, dimensão acadêmica, vínculo institucional, área de extensão, unidade, público específico e redes sociais.
+            - **Interação com os Gráficos:** Os gráficos são interativos, permitindo que você passe o mouse sobre eles para obter mais informações 
+            e explore os dados de forma mais detalhada.
+        """)
+        st.write("""
+            Este painel foi desenvolvido para auxiliar na compreensão das ações de divulgação científica na UFMG, fornecendo insights 
+            que podem ser utilizados para a elaboração de políticas e estratégias futuras. Esperamos que esta ferramenta seja útil 
+            para a comunidade acadêmica e para todos os interessados em divulgação científica.
+        """)
+    with col2:
+        st.image("assets/mapeamento_dc.jpg", use_container_width=True)
+with tab_tabela:
     st.header("Tabela de Respostas")
+    st.subheader(f"Respostas filtradas: {len(dff)}")
     st.write("Esta tabela apresenta as respostas ao questionário de Mapeamento de Divulgação Científica da UFMG. Maiores informações sobre o Mapeamento são encontrados na aba 'Sobre'.")
     st.write("Cada linha da tabela representa uma resposta ao questionário. Cada respondente poderia informar até 5 iniciativas de divulgação científica.")
     st.write("Use os controles na barra lateral para filtrar os resultados. Gráficos com análises agregadas estão disponíveis nas abas acima.")
@@ -150,7 +182,7 @@ with tabs[0]:
 
 # Gráficos
 # Gráfico de Vínculos
-with tabs[3]:
+with tab_vinculo:
     vinculos_counts = dff['vinculo'].value_counts().reset_index()
     vinculos_counts.columns = ['vinculo', 'count']
     fig_vinculos = px.bar(
@@ -159,20 +191,23 @@ with tabs[3]:
         y='count',
         labels={'vinculo': '', 'count': ''}, 
         title="Distribuição de Vínculos")
+    st.subheader(f"Respostas filtradas: {len(dff)}")
     st.plotly_chart(fig_vinculos, use_container_width=True)
 
-# Gráfico de Tipo de Ação
-with tabs[2]:
+# Gráfico de Ações por Dimensão Acadêmica
+with tab_dimensao:
     contagens = dff[['extensão', 'ensino', 'pesquisa']].sum()
     fig_tipo = go.Figure(data=[go.Pie(labels=contagens.index, values=contagens.values, title="")])
-    st.write("**Distribuição de Ações de Divulgação Científica**")
+    st.subheader(f"Respostas filtradas: {len(dff)}")
+    st.write("**Distribuição de Ações de Divulgação Científica por Dimensão Acadêmica**")
     st.plotly_chart(fig_tipo, use_container_width=True)
     st.markdown("**Observação:** Cada respondente poderia mencionar até 5 ações de Divulgação Científica. Os números aqui apresentados representam o somatório de todas as ações.")
 
 # Gráfico de Grande Área CNPq
-with tabs[1]:
+with tab_gde_area:
     gde_area_counts = dff['gde_area'].value_counts().reset_index()
     gde_area_counts.columns = ['gde_area', 'count']
+    st.subheader(f"Respostas filtradas: {len(dff)}")
     fig_grande_area = px.bar(
         gde_area_counts, 
         x='gde_area', 
@@ -182,9 +217,10 @@ with tabs[1]:
     st.plotly_chart(fig_grande_area, use_container_width=True)
 
 # Gráfico de Área de Extensão
-with tabs[4]:
+with tab_area_ext:
     area_ext_counts = dff['area_extensao'].value_counts().reset_index()
     area_ext_counts.columns = ['area_extensao', 'count']
+    st.subheader(f"Respostas filtradas: {len(dff)}")
     fig_area_extensao = px.bar(
         area_ext_counts, 
         x='area_extensao', 
@@ -194,7 +230,7 @@ with tabs[4]:
     st.plotly_chart(fig_area_extensao, use_container_width=True)
 
 # Gráfico de Unidades
-with tabs[5]:
+with tab_unidade:
     mapeamento = {
         'Escola de Ciências da Informação': 'ECI',
         'Escola de Belas-Artes': 'EBA',
@@ -232,10 +268,12 @@ with tabs[5]:
     fig_unidades = px.bar(dff_unidade_counts, x='unidade', y='contagem',
                         labels={'unidade': '', 'contagem': ''},
                         title='Distribuição de ações por Unidade (números absolutos)')
+    st.subheader(f"Respostas filtradas: {len(dff)}")
     st.plotly_chart(fig_unidades, use_container_width=True)
 
 # Construindo o gráfico de Públicos Específicos
-with tabs[6]:
+with tab_publico:
+    st.subheader(f"Respostas filtradas: {len(dff)}")
     dff_publicos = dff.filter(like="publicoespecifico").iloc[:, :-1]
     colunas = [
     'Crianças', 'Jovens', 'Adultos', 'Idosos', 
@@ -257,7 +295,8 @@ with tabs[6]:
     st.plotly_chart(fig_publicos, use_container_width=True)
 
 # Construindo o gráfico de Redes Sociais
-with tabs[7]:
+with tab_redes:
+    st.subheader(f"Respostas filtradas: {len(dff)}")
     url_pattern = re.compile(r'(https?|ftp)://[^\s/$.?#].[^\s]*', re.IGNORECASE)
     def is_valid_url(url):
         if pd.isna(url):
@@ -280,7 +319,7 @@ with tabs[7]:
     st.plotly_chart(fig_socialmedia, use_container_width=True)
 
 # Sobre
-with tabs[8]:
+with tab_sobre:
     st.subheader("Sobre o Mapeamento")
     st.write(
         '''
@@ -308,4 +347,8 @@ with tabs[8]:
     
 
 st.markdown("---")
-st.markdown("Dashboard desenvolvido por [Marcelo Pereira](https://marcelo-pereira.notion.site/)")
+col1, col2 = st.columns([6, 1])
+with col1:
+    st.markdown("Desenvolvido por [Marcelo Pereira](https://marcelo-pereira.notion.site/)")
+with col2:
+    st.image("assets/principal_completa_ufmg.jpg", use_container_width=True)
