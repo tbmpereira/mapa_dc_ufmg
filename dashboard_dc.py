@@ -6,7 +6,7 @@ import re
 from data_process import df
 
 # Configuração da página
-st.set_page_config(page_title="Mapeamento Divulgação Científica UFMG", layout="wide")
+st.set_page_config(page_title="Mapeamento Divulgação Científica UFMG", layout="wide", page_icon=":pushpin:")
 
 st.image("assets/banner_mapeamento.png", use_container_width=True)
 
@@ -31,7 +31,7 @@ st.sidebar.header("Filtros")
 
 gde_area = st.sidebar.selectbox("Grande Área CNPq", ["Todas"] + areas_cnpq)
 area_extensao = st.sidebar.selectbox("Área de Extensão", ["Todas"] + areas_extensao)
-tipo = st.sidebar.multiselect("Tipo de ação", opcoes_filtro_tipos, default=tipos)
+tipo = st.sidebar.multiselect("Dimensão Acadêmica", opcoes_filtro_tipos, default=opcoes_filtro_tipos)
 vinculo = st.sidebar.multiselect("Vínculo com a UFMG", vinculos, default=vinculos)
 unidade = st.sidebar.selectbox("Unidade", ["Todas"] + unidades)
 posgrad = st.sidebar.radio("Vínculo com Programa de Pós-Graduação?", ["Sim", "Não", "Qualquer"], index=2)
