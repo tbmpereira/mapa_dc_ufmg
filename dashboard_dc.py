@@ -26,6 +26,18 @@ tipos = ['extensão', 'ensino', 'pesquisa']
 opcoes_filtro_tipos = tipos + ["não informou"]
 vinculos = df.vinculo.unique().tolist()
 
+def config_layout(fig):
+    fig.update_layout(
+        title_font_size=24,
+        title_x=0.5,
+        xaxis=dict(
+            tickfont=dict(size=16, color='black')
+        ),
+        yaxis=dict(
+            tickfont=dict(size=16, color='black')
+        )
+    )
+
 # Sidebar
 st.sidebar.header("Filtros")
 
@@ -190,7 +202,9 @@ with tab_vinculo:
         x='vinculo', 
         y='count',
         labels={'vinculo': '', 'count': ''}, 
-        title="Distribuição de Vínculos")
+        title="Distribuição de Vínculos"
+    )
+    config_layout(fig_vinculos)
     st.subheader(f"Respostas filtradas: {len(dff)}")
     st.plotly_chart(fig_vinculos, use_container_width=True)
 
@@ -198,6 +212,7 @@ with tab_vinculo:
 with tab_dimensao:
     contagens = dff[['extensão', 'ensino', 'pesquisa']].sum()
     fig_tipo = go.Figure(data=[go.Pie(labels=contagens.index, values=contagens.values, title="")])
+    config_layout(fig_tipo)
     st.subheader(f"Respostas filtradas: {len(dff)}")
     st.write("**Distribuição de Ações de Divulgação Científica por Dimensão Acadêmica**")
     st.plotly_chart(fig_tipo, use_container_width=True)
@@ -214,6 +229,7 @@ with tab_gde_area:
         y='count',
         labels={'gde_area': '', 'count': ''}, 
         title="Distribuição por Grande Área")
+    config_layout(fig_grande_area)
     st.plotly_chart(fig_grande_area, use_container_width=True)
 
 # Gráfico de Área de Extensão
@@ -227,6 +243,7 @@ with tab_area_ext:
         y='count', 
         labels={'area_extensao': '', 'count': ''},
         title="Distribuição por Área de Extensão")
+    config_layout(fig_area_extensao)
     st.plotly_chart(fig_area_extensao, use_container_width=True)
 
 # Gráfico de Unidades
@@ -268,6 +285,7 @@ with tab_unidade:
     fig_unidades = px.bar(dff_unidade_counts, x='unidade', y='contagem',
                         labels={'unidade': '', 'contagem': ''},
                         title='Distribuição de ações por Unidade (números absolutos)')
+    config_layout(fig_unidades)
     st.subheader(f"Respostas filtradas: {len(dff)}")
     st.plotly_chart(fig_unidades, use_container_width=True)
 
@@ -292,6 +310,7 @@ with tab_publico:
                             y='Contagem',
                         labels={'Público': '', 'Contagem': ''},
                         title='Público Alvo Específico (números absolutos)<br><sup>Entre os respondentes que informaram públicos específicos</sup>')
+    config_layout(fig_publicos)
     st.plotly_chart(fig_publicos, use_container_width=True)
 
 # Construindo o gráfico de Redes Sociais
@@ -316,6 +335,7 @@ with tab_redes:
                             labels={'Rede Social':'', 'Contagem':''},
                             title='Uso de Redes Sociais nas ações de Divulgação Científica (números absolutos)',
                             )
+    config_layout(fig_socialmedia)
     st.plotly_chart(fig_socialmedia, use_container_width=True)
 
 # Sobre
